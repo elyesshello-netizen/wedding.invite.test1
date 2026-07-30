@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حفل زفاف فلان و فلانة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            /* Immersive, high-end wedding photo */
+            background: linear-gradient(rgba(10, 10, 10, 0.75), rgba(30, 20, 25, 0.8)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Cairo', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            /* Essential for full-screen effect */
+            position: relative;
+        }
+        /* Canvas for High-Performance Heart Particle Physics */
+        
+        #heart-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            /* Clicks pass through */
+            z-index: 999;
+        }
+        
+        .invitation-card {
+            background: rgba(255, 255, 255, 0.98);
+            color: #2c3e50;
+            width: 100%;
+            max-width: 650px;
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 0 2px rgba(212, 175, 55, 0.4);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(15px);
+            /* Hidden initially for the reveal */
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        
+        .invitation-card::before,
+        .invitation-card::after {
+            content: '✦';
+            position: absolute;
+            color: #b8860b;
+            font-size: 1.3rem;
+            opacity: 0.8;
+        }
+        
+        .invitation-card::before {
+            top: 25px;
+            right: 25px;
+        }
+        
+        .invitation-card::after {
+            top: 25px;
+            left: 25px;
+        }
+        
+        .image-collage {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .image-collage img {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .badge {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #b8860b;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        h1 {
+            font-family: 'Amiri', serif;
+            font-size: 3.5rem;
+            color: #1a1a1a;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        h1 span {
+            color: #b8860b;
+            margin: 0 10px;
+            display: inline-block;
+            /* Slight scale-up on load */
+            animation: popIn 0.5s ease-out forwards;
+            animation-delay: 1.2s;
+            opacity: 0;
+        }
+        
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            80% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .verse-text {
+            font-family: 'Amiri', serif;
+            font-size: 1.15rem;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .date-display {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #444;
+            margin-top: 5px;
+            padding: 12px 35px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            display: inline-block;
+            letter-spacing: 1px;
+            background: rgba(250, 248, 245, 0.6);
+        }
+        
+        .details-section {
+            margin-top: 35px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            background: #faf8f5;
+            padding: 22px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+        
+        .detail-box h3 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b8860b;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .detail-box p {
+            font-size: 1.05rem;
+            color: #222;
+            font-weight: 600;
+        }
+        
+        .location-note {
+            font-size: 0.82rem;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 400;
+        }
+        
+        .no-kids-tag {
+            margin-top: 25px;
+            display: block;
+            color: #8c7355;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .closing-thought {
+            margin-top: 30px;
+            font-family: 'Amiri', serif;
+            color: #555;
+            font-size: 1.45rem;
+            line-height: 1.5;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Canvas for Full-Screen Heart Effect -->
+    <canvas id="heart-canvas"></canvas>
+
+    <div class="invitation-card" id="card">
+        <div class="image-collage" id="photos">
+            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=300&q=80" alt="Wedding Detail 1">
+            <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=300&q=80" alt="Wedding Detail 2">
+            <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=300&q=80" alt="Wedding Detail 3">
+        </div>
+
+        <div class="badge">دعوة حفل زفاف مبارك</div>
+
+        <h1>فلان <span>&</span> فلانة</h1>
+
+        <p class="verse-text">"ومن آياته أن خلق لكم من أنفسكم أزواجاً لتسكنوا إليها وجعل بينكم مودة ورحمة"</p>
+
+        <div class="date-display">
+            16/09/2035
+        </div>
+
+        <div class="details-section">
+            <div class="detail-box">
+                <h3>الوقت</h3>
+                <p>العاشرة مساءً (10:00 PM)</p>
+                <p class="location-note">حفل الاستقبال والسهرة</p>
+            </div>
+            <div class="detail-box">
+                <h3>المكان</h3>
+                <p>قاعة أفراح الملكي</p>
+                <p class="location-note">صفاقس</p>
+            </div>
+        </div>
+
+        <div class="no-kids-tag">
+            الحفل للبالغين فقط، نعتذر عن إحضار الأطفال لضمان راحة الجميع
+        </div>
+
+        <p class="closing-thought">
+            وجودكم تكتمل فرحتنا وتشرق أنوار ليلتنا العمرية.
+        </p>
+    </div>
+
+    <script>
+        // 1. GSAP Card Entrance Animation
+        gsap.to("#card", {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.5)",
+            delay: 0.5
+        });
+
+        // 2. Full-Screen Heart Particle Animation (Canvas)
+        const canvas = document.getElementById('heart-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const hearts = [];
+        const heartColors = [
+            'rgba(255, 99, 71, 0.8)', // Tomato
+            'rgba(255, 20, 147, 0.8)', // Deep Pink
+            'rgba(220, 20, 60, 0.8)', // Crimson
+            'rgba(255, 182, 193, 0.8)' // Light Pink
+        ];
+
+        class Heart {
+            constructor(isInitial) {
+                this.init(isInitial);
+            }
+
+            init(isInitial) {
+                this.x = Math.random() * canvas.width;
+                // If initial, spread them out vertically. Otherwise, start above.
+                this.y = isInitial ? Math.random() * canvas.height : -50;
+                this.size = Math.random() * 20 + 15;
+                this.speedY = Math.random() * 1.5 + 1;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 3;
+                this.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+
+                // Recycle heart when it goes off screen
+                if (this.y > canvas.height + 50) {
+                    this.init(false);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+
+                // Heart Shape Path
+                const s = this.size / 20;
+                ctx.beginPath();
+                ctx.moveTo(0, 10 * s);
+                ctx.bezierCurveTo(0, 2 * s, -10 * s, 2 * s, -10 * s, 10 * s);
+                ctx.bezierCurveTo(-10 * s, 18 * s, 0, 24 * s, 0, 30 * s);
+                ctx.bezierCurveTo(0, 24 * s, 10 * s, 18 * s, 10 * s, 10 * s);
+                ctx.bezierCurveTo(10 * s, 2 * s, 0, 2 * s, 0, 10 * s);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Initialize heart density (heavy cover at start)
+        const heartCount = 90;
+        for (let i = 0; i < heartCount; i++) {
+            hearts.push(new Heart(true)); // true = isInitial spread
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => {
+                h.update();
+                h.draw();
+            });
+            requestAnimationFrame(animateHearts);
+        }
+
+        animateHearts();
+    </script>
+
+</body>
+
+</html>
